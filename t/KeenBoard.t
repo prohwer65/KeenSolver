@@ -48,5 +48,3 @@ done_testing();
 ##################################################################
 
 # vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround
-
-
