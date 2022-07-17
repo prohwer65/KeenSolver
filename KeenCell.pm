@@ -60,6 +60,7 @@ sub new {
     $self->{'possible'} = [1 .. $Ncells];
     $self->{'solved'}   = 0;
     $self->{'N'} = $Ncells;
+    $self->{'title'} = shift;
 
 
     bless $self, $class;
@@ -111,22 +112,47 @@ sub isCellSolved {
 
 sub setMathEquation {
 
-    my $self = shift;
-    my $keenMath       = shift;     # "+4", "-4", "x8", "/2",  math equation for this cell and partner(s).
+    my $self        = shift;
+    my $keenMath    = shift;     # "+4", "-4", "x8", "/2",  math equation for this cell and partner(s).
 
-    if ( $keenMath =~ /([-+xd])(\d*)/ ) {
+    my @mathPartners = @_;
+    $self->{'mathPartners'} = \@mathPartners;
 
+    if ( $keenMath =~ /([-+xd])(\d+)/ ) {
+        #print "-+xd  dd   ";
         $self->{'operator'} = $1;
         $self->{'solution'} = $2;
-
+    } elsif ( $keenMath =~ /(\d+)([-+xd])/ ) {
+        #print "dd  -+xd  ";
+        $self->{'solution'} = $1;
+        $self->{'operator'} = $2;
     } else {
         die "Unknown equation ($keenMath).";
     }
+    #print "$keenMath  = $self->{'solution'} $self->{'operator'} \n";
+
+}
+
+sub getOperator {
+    my $self        = shift;
+    return $self->{'operator'};
+}
+
+sub getSolution {
+    my $self        = shift;
+    return $self->{'solution'};
+}
+
+sub numberOfPartners {
+    my $self        = shift;
+
+    my @tmp = @{  $self->{'mathPartners'} };
+    return scalar (  @tmp );
 
 }
 #===  FUNCTION  ================================================================
-#         NAME: getCellStates
-#      PURPOSE: return an array of the pencil marks for that cell.
+#         NAME: getRefOfCellPencilMarks
+#      PURPOSE: returns a reference to an array of the pencil marks for that cell.
 #   PARAMETERS: ????
 #      RETURNS: ????
 #  DESCRIPTION: ????
@@ -134,10 +160,26 @@ sub setMathEquation {
 #     COMMENTS: none
 #     SEE ALSO: n/a
 #===============================================================================
-sub getCellStates {
+sub getRefOfCellPencilMarks {
     my $self = shift;
     return     \$self->{'possible'} ;
 }
+
+#===  FUNCTION  ================================================================
+#         NAME: getArrayOfCellPencilMarks
+#      PURPOSE: returns an array of the pencil marks for that cell.
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
+sub getArrayOfCellPencilMarks {
+    my $self = shift;
+    return     $self->{'possible'} ;
+}
+
 
 
 
@@ -189,7 +231,9 @@ sub numberPencils {
 sub solveByMath {
     my $self           = shift;
     #my $keenMath       = shift;     # "+4", "-4", "x8", "/2",  math equation for this cell and partner(s).
-    my @partnersValues = @_;
+    my $numberOfPartners = $self->numberOfPartners();
+
+    my @partners = @{  $self->{'mathPartners'} };
 
     if ( ! defined $self->{'operator'} ) {
         die "Math Equation is not defined (operator) ";
@@ -198,14 +242,16 @@ sub solveByMath {
         die "Math Equation is not defined (solution). ";
     }
     
-    if ( $self->{'operator'} eq "+" ) {
-       $self->tryMathAdd( $self->{'solution'}, @partnersValues );
-    } elsif ( $self->{'operator'} eq "-" ) {
-        $self->tryMathSubtract( $self->{'solution'}, @partnersValues );
-    } elsif ( $self->{'operator'} eq "x" ) {
-        $self->tryMathMulti( $self->{'solution'}, @partnersValues );
-    } elsif ( $self->{'operator'} eq "d" ) {
-        $self->tryMathDivide( $self->{'solution'}, @partnersValues );
+    if      ( $self->{'operator'} eq "+" && $numberOfPartners==1) { $self->tryMathAdd2( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "+" && $numberOfPartners==2) { $self->tryMathAddMulti3( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "+" && $numberOfPartners==3) { $self->tryMathAddMulti4( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "x" && $numberOfPartners==1) { $self->tryMathMulti2( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "x" && $numberOfPartners==2) { $self->tryMathAddMulti3( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "x" && $numberOfPartners==3) { $self->tryMathAddMulti4( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "-" && $numberOfPartners==1) { $self->tryMathSubtract2( $self->{'solution'}, @partners);
+    } elsif ( $self->{'operator'} eq "d" && $numberOfPartners==1) { $self->tryMathDivide2( $self->{'solution'}, @partners);
+    } else {
+        die "Undefined operator ($self->{'operator'} ) or numberOfPartners ( $numberOfPartners)";
     }
 
     return ( scalar ( @{ $self->{'possible'} }) );
@@ -213,60 +259,269 @@ sub solveByMath {
 
 
 
-sub tryMathAdd {
+
+sub tryMathAdd2 {
     my $self = shift;
-    my $sum = shift; 
-    my @partnersValues = @_;
+    my $sum  = shift; 
+    my @partners = @_;
+    my @partnersValues = @{ $partners[0]->getArrayOfCellPencilMarks() };
+    my $trackNumberOfChanges=0;
 
     #print Data::Dumper->Dump( [ $sum, \@partnersValues, ] , [ qw( sum partnersValues ) ] ) . "\n";
-    my %hashSolved;
+    my %pencilNeeded;         # hash of self's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededPartner;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
 
     foreach my $a (  @{ $self->{'possible'} } ) {
-        $hashSolved{$a}     = 0;
+        $pencilNeeded{$a}     = 0;
+    }
+
+    foreach my $a (  @partnersValues ) {
+        $pencilNeededPartner{$a}     = 0;
     }
 
     foreach my $b ( @partnersValues ) {
         foreach my $a (  @{ $self->{'possible'} } ) {
+            #print "Attempting to add $b and $a to see if equal $sum\n";
             if ( $sum == ($a + $b) )  { 
-                $hashSolved{$a} = 1;
+                $pencilNeeded{$a} = 1;
+                $pencilNeededPartner{$b} = 1;
             }
         }
     }
 
     
     foreach my $a (  @{ $self->{'possible'} } ) {
-        if ( $hashSolved{$a}    == 0 ) {
+        if ( $pencilNeeded{$a}    == 0 ) {
             $self->removeValues( $a );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+    
+    foreach my $b ( @partnersValues ) {
+        if ( $pencilNeededPartner{$b}    == 0 ) {
+            $partners[0]->removeValues( $b );
+            $trackNumberOfChanges++;
         }
     }
 
 
 }
 
-sub tryMathMulti {
+sub tryMathAddMulti3 {
+    my $self = shift;
+    my $sum  = shift; 
+    my @partners = @_;
+    my @partnersBValues = @{ $partners[0]->getArrayOfCellPencilMarks() };
+    my @partnersCValues = @{ $partners[1]->getArrayOfCellPencilMarks() };
+    my $trackNumberOfChanges=0;
+
+    #print Data::Dumper->Dump( [ $sum, \@partnersValues, ] , [ qw( sum partnersValues ) ] ) . "\n";
+    my %pencilNeeded;         # hash of self's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededB;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededC;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
+
+    foreach my $selfMarks (  @{ $self->{'possible'} } ) {
+        $pencilNeeded{$selfMarks}     = 0;
+    }
+
+    foreach my $bMarks (  @partnersBValues ) {
+        $pencilNeededB{$bMarks}     = 0;
+    }
+    
+    foreach my $cMarks (  @partnersCValues ) {
+        $pencilNeededC{$cMarks}     = 0;
+    }
+
+
+    foreach my $c ( @partnersCValues ) {
+        foreach my $b ( @partnersBValues ) {
+            foreach my $selfMarks (  @{ $self->{'possible'} } ) {
+            #print "Attempting to add $b and $selfMarks to see if equal $sum\n";
+                if ( $self->{'operator'} eq "+") {
+                    if ( $sum == ($selfMarks + $b + $c ) )  { 
+                        $pencilNeeded{$selfMarks} = 1;
+                        $pencilNeededB{$b} = 1;
+                        $pencilNeededC{$b} = 1;
+                    }
+                }
+                if ( $self->{'operator'} eq "x") {
+                    if ( $sum == ($selfMarks * $b * $c ) )  { 
+                        $pencilNeeded{$selfMarks} = 1;
+                        $pencilNeededB{$b} = 1;
+                        $pencilNeededC{$b} = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    
+    foreach my $selfMarks (  @{ $self->{'possible'} } ) {
+        if ( $pencilNeeded{$selfMarks}    == 0 ) {
+            $self->removeValues( $selfMarks );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+    
+    foreach my $b ( @partnersBValues ) {
+        if ( $pencilNeededB{$b}    == 0 ) {
+            $partners[0]->removeValues( $b );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+    
+    foreach my $c ( @partnersCValues ) {
+        if ( $pencilNeededC{$c}    == 0 ) {
+            $partners[1]->removeValues( $c );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+}
+
+sub tryMathAddMulti4 {
+    my $self = shift;
+    my $sum  = shift; 
+    my @partners = @_;
+    my @partnersBValues = @{ $partners[0]->getArrayOfCellPencilMarks() };
+    my @partnersCValues = @{ $partners[1]->getArrayOfCellPencilMarks() };
+    my @partnersDValues = @{ $partners[2]->getArrayOfCellPencilMarks() };
+    my $trackNumberOfChanges=0;
+
+    #print Data::Dumper->Dump( [ $sum, \@partnersValues, ] , [ qw( sum partnersValues ) ] ) . "\n";
+    my %pencilNeeded;         # hash of self's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededB;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededC;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededD;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
+
+    foreach my $selfMarks (  @{ $self->{'possible'} } ) {
+        $pencilNeeded{$selfMarks}     = 0;
+    }
+
+    foreach my $bMarks (  @partnersBValues ) {
+        $pencilNeededB{$bMarks}     = 0;
+    }
+    
+    foreach my $cMarks (  @partnersCValues ) {
+        $pencilNeededC{$cMarks}     = 0;
+    }
+
+    foreach my $dMarks (  @partnersDValues ) {
+        $pencilNeededD{$dMarks}     = 0;
+    }
+
+
+    foreach my $d ( @partnersDValues ) {
+    foreach my $c ( @partnersCValues ) {
+        foreach my $b ( @partnersBValues ) {
+            foreach my $selfMarks (  @{ $self->{'possible'} } ) {
+            #print "Attempting to add $b and $selfMarks to see if equal $sum\n";
+                if ( $self->{'operator'} eq "+") {
+                    if ( $sum == ($selfMarks + $b + $c + $d ) )  { 
+                        $pencilNeeded{$selfMarks} = 1;
+                        $pencilNeededB{$b} = 1;
+                        $pencilNeededC{$c} = 1;
+                        $pencilNeededD{$d} = 1;
+                    }
+                }
+                if ( $self->{'operator'} eq "x") {
+                    if ( $sum == ($selfMarks * $b * $c * $d ) )  { 
+                        $pencilNeeded{$selfMarks} = 1;
+                        $pencilNeededB{$b} = 1;
+                        $pencilNeededC{$c} = 1;
+                        $pencilNeededD{$d} = 1;
+                    }
+                }
+            }
+        }
+    }
+    }
+
+    
+    foreach my $selfMarks (  @{ $self->{'possible'} } ) {
+        if ( $pencilNeeded{$selfMarks}    == 0 ) {
+            $self->removeValues( $selfMarks );
+            $trackNumberOfChanges++;
+        }
+    }
+
+    foreach my $b ( @partnersBValues ) {
+        if ( $pencilNeededB{$b}    == 0 ) {
+            $partners[0]->removeValues( $b );
+            $trackNumberOfChanges++;
+        }
+    }
+
+    foreach my $c ( @partnersCValues ) {
+        if ( $pencilNeededC{$c}    == 0 ) {
+            $partners[1]->removeValues( $c );
+            $trackNumberOfChanges++;
+        }
+    }
+
+    foreach my $d ( @partnersDValues ) {
+        if ( $pencilNeededD{$d}    == 0 ) {
+            $partners[2]->removeValues( $d );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+
+}
+
+sub tryMathMulti2 {
     my $self = shift;
     my $sum = shift; 
-    my @partnersValues = @_;
+
+    my @partners = @_;
+    my @partnersValues = @{ $partners[0]->getArrayOfCellPencilMarks() };
+    my $trackNumberOfChanges=0;
 
     # print Data::Dumper->Dump( [ $sum, \@partnersValues, ] , [ qw( sum partnersValues ) ] ) . "\n";
-    my %hashSolved;
+
+    my %pencilNeeded;         # hash of self's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededPartner;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
 
     foreach my $a (  @{ $self->{'possible'} } ) {
-        $hashSolved{$a}     = 0;
+        $pencilNeeded{$a}     = 0;
+    }
+
+    foreach my $a (  @partnersValues ) {
+        $pencilNeededPartner{$a}     = 0;
     }
 
     foreach my $b ( @partnersValues ) {
         foreach my $a (  @{ $self->{'possible'} } ) {
+            #print "Attempting to add $b and $a to see if equal $sum\n";
             if ( $sum == ($a * $b) )  { 
-                $hashSolved{$a} = 1;
+                $pencilNeeded{$a} = 1;
+                $pencilNeededPartner{$b} = 1;
             }
         }
     }
 
     
     foreach my $a (  @{ $self->{'possible'} } ) {
-        if ( $hashSolved{$a}    == 0 ) {
+        if ( $pencilNeeded{$a}    == 0 ) {
             $self->removeValues( $a );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+    
+    foreach my $b ( @partnersValues ) {
+        if ( $pencilNeededPartner{$b}    == 0 ) {
+            $partners[0]->removeValues( $b );
+            $trackNumberOfChanges++;
         }
     }
 
@@ -276,67 +531,110 @@ sub tryMathMulti {
 
 
 
-sub tryMathSubtract {
+sub tryMathSubtract2 {
     my $self = shift;
     my $sum = shift; 
-    my @partnersValues = @_;
+
+    my @partners = @_;
+    my @partnersValues = @{ $partners[0]->getArrayOfCellPencilMarks() };
+    my $trackNumberOfChanges=0;
 
     # print Data::Dumper->Dump( [ $sum, \@partnersValues, ] , [ qw( sum partnersValues ) ] ) . "\n";
-    my %hashSolved;
+    my %pencilNeeded;         # hash of self's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededPartner;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
 
     foreach my $a (  @{ $self->{'possible'} } ) {
-        $hashSolved{$a}     = 0;
+        $pencilNeeded{$a}     = 0;
+    }
+
+    foreach my $a (  @partnersValues ) {
+        $pencilNeededPartner{$a}     = 0;
     }
 
     foreach my $b ( @partnersValues ) {
         foreach my $a (  @{ $self->{'possible'} } ) {
+            #print "Attempting to add $b and $a to see if equal $sum\n";
             if ( $sum == ($a - $b) )  { 
-                $hashSolved{$a} = 1;
+                $pencilNeeded{$a} = 1;
+                $pencilNeededPartner{$b} = 1;
             }
             if ( $sum == ($b - $a) )  { 
-                $hashSolved{$a} = 1;
+                $pencilNeeded{$a} = 1;
+                $pencilNeededPartner{$b} = 1;
             }
         }
     }
 
     
     foreach my $a (  @{ $self->{'possible'} } ) {
-        if ( $hashSolved{$a}    == 0 ) {
+        if ( $pencilNeeded{$a}    == 0 ) {
             $self->removeValues( $a );
+            $trackNumberOfChanges++;
         }
     }
+
+
+    
+    foreach my $b ( @partnersValues ) {
+        if ( $pencilNeededPartner{$b}    == 0 ) {
+            $partners[0]->removeValues( $b );
+            $trackNumberOfChanges++;
+        }
+    }
+
 
 
 }
 
 
-sub tryMathDivide {
+sub tryMathDivide2 {
     my $self = shift;
     my $sum = shift; 
-    my @partnersValues = @_;
+
+    my @partners = @_;
+    my @partnersValues = @{ $partners[0]->getArrayOfCellPencilMarks() };
+    my $trackNumberOfChanges=0;
 
     # print Data::Dumper->Dump( [ $sum, \@partnersValues, ] , [ qw( sum partnersValues ) ] ) . "\n";
-    my %hashSolved;
+    my %pencilNeeded;         # hash of self's pencil marks, will be used to flag if value is needed in math eq.
+    my %pencilNeededPartner;  # hash of Partner's pencil marks, will be used to flag if value is needed in math eq.
 
     foreach my $a (  @{ $self->{'possible'} } ) {
-        $hashSolved{$a}     = 0;
+        $pencilNeeded{$a}     = 0;
+    }
+
+    foreach my $a (  @partnersValues ) {
+        $pencilNeededPartner{$a}     = 0;
     }
 
     foreach my $b ( @partnersValues ) {
         foreach my $a (  @{ $self->{'possible'} } ) {
+            #print "Attempting to add $b and $a to see if equal $sum\n";
             if ( $sum == ($a / $b) )  { 
-                $hashSolved{$a} = 1;
+                $pencilNeeded{$a} = 1;
+                $pencilNeededPartner{$b} = 1;
             }
             if ( $sum == ($b / $a) )  { 
-                $hashSolved{$a} = 1;
+                $pencilNeeded{$a} = 1;
+                $pencilNeededPartner{$b} = 1;
             }
         }
     }
 
     
     foreach my $a (  @{ $self->{'possible'} } ) {
-        if ( $hashSolved{$a}    == 0 ) {
+        if ( $pencilNeeded{$a}    == 0 ) {
             $self->removeValues( $a );
+            $trackNumberOfChanges++;
+        }
+    }
+
+
+    
+    foreach my $b ( @partnersValues ) {
+        if ( $pencilNeededPartner{$b}    == 0 ) {
+            $partners[0]->removeValues( $b );
+            $trackNumberOfChanges++;
         }
     }
 
@@ -366,6 +664,9 @@ sub printCell {
     my $self = shift;
     my $row  = shift;     # which row is being printed  
 
+    if ( not defined $row) {
+        die "function printCell() needs a value 0:2 to know which row of the cell to print\n";
+    }
     my %hashOfPossible ;
     if ( $self ->{'solved'}  ) { 
         return ("| ". $self->{'possible'} . " ". $self->{'possible'} . " ". $self->{'possible'} . " ");
@@ -388,10 +689,27 @@ sub printCell {
 
 }
 
-sub toPrint {
+sub printEquations {
     my $self = shift;
 
-    return Dumper(\$self);
+    my $retStr = sprintf( " %2d%s ",  ($self->{'solution'} || "  ") , ($self->{'operator'} || " ")) ;
+    return $retStr;
+}
+
+sub printTitle {
+    my $self = shift;
+    return $self->{'title'} || "no title";
+}
+
+sub toPrint {
+    my $self = shift;
+    local $Data::Dumper::Sortkeys = 1;
+    local $Data::Dumper::Purity   = 1;  ##new to verify this
+
+    my $title = $self->{'title'};
+
+    return Data::Dumper->Dump( [\$self],  [$title ] ) . "\n";
+    #return Dumper(\$self);
 }
 
 
