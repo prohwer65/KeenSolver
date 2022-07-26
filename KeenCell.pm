@@ -48,7 +48,16 @@ Readonly my $notSolved     =>  0;
 my $DEBUGLEVEL = 0;
 
 
-##############################################################################
+#===  FUNCTION  ================================================================
+#{{{1     NAME: new
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub new {
     my $this = shift;
     my $class = ref($this) || $this;
@@ -66,11 +75,11 @@ sub new {
     bless $self, $class;
     
     return $self;
-}
+}   # end of new
 
 
 #===  FUNCTION  ================================================================
-#         NAME: setCellState
+#{{{1     NAME: setCellState
 #      PURPOSE: When a cell's state is known, call this method with that value. 
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -91,11 +100,11 @@ sub setCellState {
     $self->{'solved'} = 1;
 
     return     $self->{'possible'} ;
-}
+}   # end of setCellState
 
 
 #===  FUNCTION  ================================================================
-#         NAME: isCellSolved
+#{{{1     NAME: isCellSolved
 #      PURPOSE: check to see if the cell has been solved or not. 
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -107,9 +116,18 @@ sub setCellState {
 sub isCellSolved {
     my $self = shift;
     return     $self->{'solved'} ;
-}
+}   # end of isCellSolved
 
-
+#===  FUNCTION  ================================================================
+#{{{1     NAME: setMathEquation
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub setMathEquation {
 
     my $self        = shift;
@@ -131,27 +149,59 @@ sub setMathEquation {
     }
     #print "$keenMath  = $self->{'solution'} $self->{'operator'} \n";
 
-}
+}   # end of setMathEquation
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: getOperator
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub getOperator {
     my $self        = shift;
     return $self->{'operator'};
-}
+}   # end of getOperator
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: getSolution
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub getSolution {
     my $self        = shift;
     return $self->{'solution'};
-}
+}   # end of getSolution
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: numberOfPartners
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub numberOfPartners {
     my $self        = shift;
 
     my @tmp = @{  $self->{'mathPartners'} };
     return scalar (  @tmp );
 
-}
+}   # end of numberOfPartners
 #===  FUNCTION  ================================================================
-#         NAME: getRefOfCellPencilMarks
+#{{{1     NAME: getRefOfCellPencilMarks
 #      PURPOSE: returns a reference to an array of the pencil marks for that cell.
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -163,10 +213,10 @@ sub numberOfPartners {
 sub getRefOfCellPencilMarks {
     my $self = shift;
     return     \$self->{'possible'} ;
-}
+}   # end of getRefOfCellPencilMarks
 
 #===  FUNCTION  ================================================================
-#         NAME: getArrayOfCellPencilMarks
+#{{{1     NAME: getArrayOfCellPencilMarks
 #      PURPOSE: returns an array of the pencil marks for that cell.
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -178,13 +228,13 @@ sub getRefOfCellPencilMarks {
 sub getArrayOfCellPencilMarks {
     my $self = shift;
     return     $self->{'possible'} ;
-}
+}   # end of getArrayOfCellPencilMarks
 
 
 
 
 #===  FUNCTION  ================================================================
-#         NAME: removeValues
+#{{{1     NAME: removeValues
 #      PURPOSE: As pencil marks are eliminated, call this method with those values.
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -219,15 +269,36 @@ sub removeValues {
 
     return( scalar( @workingArray) );
 
-}
+}   # end of removeValues
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: numberPencils
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub numberPencils {
     my $self = shift;
     
     return ( scalar ( @{ $self->{'possible'} }) );
-}
+}   # end of numberPencils
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: solveByMath
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub solveByMath {
     my $self           = shift;
     #my $keenMath       = shift;     # "+4", "-4", "x8", "/2",  math equation for this cell and partner(s).
@@ -255,11 +326,21 @@ sub solveByMath {
     }
 
     return ( scalar ( @{ $self->{'possible'} }) );
-}
+}   # end of solveByMath   # end of solveByMath
 
 
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: tryMathAdd2
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub tryMathAdd2 {
     my $self = shift;
     my $sum  = shift; 
@@ -307,8 +388,18 @@ sub tryMathAdd2 {
     }
 
 
-}
+}   # end of tryMathAdd2   # end of tryMathAdd2
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: tryMathAddMulti3
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub tryMathAddMulti3 {
     my $self = shift;
     my $sum  = shift; 
@@ -384,8 +475,18 @@ sub tryMathAddMulti3 {
     }
 
 
-}
+}   # end of tryMathAddMulti3
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: tryMathAddMulti4
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub tryMathAddMulti4 {
     my $self = shift;
     my $sum  = shift; 
@@ -475,8 +576,18 @@ sub tryMathAddMulti4 {
 
 
 
-}
+}   # end of tryMathAddMulti4
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: tryMathMulti2
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub tryMathMulti2 {
     my $self = shift;
     my $sum = shift; 
@@ -526,11 +637,21 @@ sub tryMathMulti2 {
     }
 
 
-}
+}   # end of tryMathMulti2
 
 
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: tryMathSubtract2
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub tryMathSubtract2 {
     my $self = shift;
     my $sum = shift; 
@@ -584,9 +705,19 @@ sub tryMathSubtract2 {
 
 
 
-}
+}   # end of tryMathSubtract2
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: tryMathDivide2
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub tryMathDivide2 {
     my $self = shift;
     my $sum = shift; 
@@ -639,11 +770,11 @@ sub tryMathDivide2 {
     }
 
 
-}
+}   # end of tryMathDivide2
 
 
 #===  FUNCTION  ================================================================
-#         NAME: printCell
+#{{{1     NAME: printCell
 #      PURPOSE: 
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -687,20 +818,50 @@ sub printCell {
 
     return $string;
 
-}
+}   # end of printCell
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: printEquations
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub printEquations {
     my $self = shift;
 
     my $retStr = sprintf( " %2d%s ",  ($self->{'solution'} || "  ") , ($self->{'operator'} || " ")) ;
     return $retStr;
-}
+}   # end of printEquations
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: printTitle
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub printTitle {
     my $self = shift;
     return $self->{'title'} || "no title";
-}
+}   # end of printTitle
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: toPrint
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub toPrint {
     my $self = shift;
     local $Data::Dumper::Sortkeys = 1;
@@ -710,9 +871,10 @@ sub toPrint {
 
     return Data::Dumper->Dump( [\$self],  [$title ] ) . "\n";
     #return Dumper(\$self);
-}
+}   # end of toPrint
 
 
 1;
 
-# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround 
+# }}}1
+# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround:set foldenable foldmethod=marker:

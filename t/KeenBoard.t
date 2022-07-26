@@ -55,6 +55,16 @@ done_testing( $numberOfTests);
 #
 #
 #
+#===  FUNCTION  ================================================================
+#{{{1     NAME: testBySolveByMath
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub testBySolveByMath {
 
     my $test = KeenBoard->new("5");
@@ -77,11 +87,12 @@ sub testBySolveByMath {
     $test->solveByMath();
     print $test->printBoard();
 
-}
+}   # end of testBySolveByMath
 ##################################################################
 #
 #
 #
 ##################################################################
 
-# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround
+# }}}1
+# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround:set foldenable foldmethod=marker:

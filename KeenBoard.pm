@@ -29,7 +29,16 @@ use Data::Dumper;
 
 has 'name'       => ( is => 'ro', isa => "Str" );
 
-##############################################################################
+#===  FUNCTION  ================================================================
+#{{{1     NAME: new
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub new {
     my $this = shift;
     my $class = ref($this) || $this;
@@ -62,12 +71,12 @@ sub new {
     bless $self, $class;
     
     return $self;
-}
+}   # end of new
 
 
 
 #===  FUNCTION  ================================================================
-#         NAME: setCellState
+#{{{1     NAME: setCellState
 #      PURPOSE: When a cell's state is known, call this method with that value. 
 #   PARAMETERS: ????
 #      RETURNS: ????
@@ -93,9 +102,19 @@ sub setCellState {
     $Board[ $row ][ $col ]->setCellState( $state );
     #print $Board[ $row ][ $col ]->toPrint();
 
-}
+}   # end of setCellState
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: defineCellRelation
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 
 sub defineCellRelation {
     my $self     = shift;
@@ -114,11 +133,6 @@ sub defineCellRelation {
     #print Data::Dumper->Dump( [\$partners[2][0], ],  [ qw( partners ) ] ) . "\n";
     #print Data::Dumper->Dump( [\$partners[2][1], ],  [ qw( partners ) ] ) . "\n";
 
-    #foreach my $xy ( @partners ) {
-    #    my $row = $xy->[0];
-    #    my $col = $xy->[1];
-    #}
-    #
 
     if ( $numberOfPartners == 2) {
         $Board[ $partners[0][1] ][ $partners[0][0] ]->setMathEquation( $equation, $Board[ $partners[1][1] ][ $partners[1][0] ]);
@@ -135,8 +149,19 @@ sub defineCellRelation {
     }
 
 
-}
+}   # end of defineCellRelation
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: solveByMath
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub solveByMath {
     my $self = shift; 
     my $boardSize = $self->{'N'};
@@ -154,7 +179,20 @@ sub solveByMath {
 
     return ;
 
-}
+}   # end of solveByMath
+
+
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: printTitles
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub printTitles {
     my $self = shift; 
     my $boardSize = $self->{'N'};
@@ -176,8 +214,19 @@ sub printTitles {
 
     return $retString;
 
-}
+}   # end of printTitles
 
+
+#===  FUNCTION  ================================================================
+# {{{1    NAME: printEquations
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub printEquations {
     my $self = shift; 
     my $boardSize = $self->{'N'};
@@ -201,8 +250,18 @@ sub printEquations {
 
     return $retString;
 
-}
+}   # end of printEquations
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: printBoard
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub printBoard {
     my $self = shift; 
     my $boardSize = $self->{'N'};
@@ -229,16 +288,26 @@ sub printBoard {
 
     return $retString;
 
-}
+}   # end of printBoard
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: toPrint                      
+#      PURPOSE:   
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub toPrint {
     my $self = shift;
     local $Data::Dumper::Sortkeys = 1;
     local $Data::Dumper::Purity   = 1;  ##new to verify this
 
     return Dumper(\$self);
-}
+}   # end of toPrint
  
 
 
@@ -249,4 +318,5 @@ sub toPrint {
 #
 ##################################################################
 
-# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround
+# }}}1
+# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround:set foldenable foldmethod=marker:

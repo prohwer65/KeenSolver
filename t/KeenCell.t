@@ -162,6 +162,16 @@ test4factors();
 done_testing( $numberOfTests);
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: test3factors
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub test3factors {
     note( "test3factors() :");
     my $testZ=KeenCell->new("9", "Z");      #third cell in eqaution
@@ -193,12 +203,22 @@ sub test3factors {
     print $testZ->printCell(1).  " |row 1 \n";
     print $testZ->printCell(2).  " |row 2 \n";
 
-}
+}   # end of test3factors
 
 
 
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: test4factors
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub test4factors {
     note( "test4factors() :");
     my $testW=KeenCell->new("9", "W");
@@ -238,11 +258,12 @@ sub test4factors {
     print $testZ->printCell(1).  " |row 1 \n";
     print $testZ->printCell(2).  " |row 2 \n";
 
-}
+}   # end of test4factors
 
 
 
 
 
 
-# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround 
+# }}}1
+# vim:tabstop=4:si:expandtab:shiftwidth=4:shiftround:set foldenable foldmethod=marker:
