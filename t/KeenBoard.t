@@ -47,6 +47,26 @@ print $test->printBoard();
 print $test->printTitles();
 
 testBySolveByMath();
+
+
+
+testAnalzer();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 done_testing( $numberOfTests);
 
 ##################################################################
@@ -55,6 +75,8 @@ done_testing( $numberOfTests);
 #
 #
 #
+#=== {{{1     SUBROUTINE FUNCTIONS  ================================================================
+#===  FUNCTION  ================================================================
 #===  FUNCTION  ================================================================
 #{{{1     NAME: testBySolveByMath
 #      PURPOSE: 
@@ -88,6 +110,27 @@ sub testBySolveByMath {
     print $test->printBoard();
 
 }   # end of testBySolveByMath
+
+sub testAnalzer {
+
+    my $test = KeenBoard->new("5");
+
+    my %results = $test->analyzeBoard();
+    print $test->printBoard();
+
+    #print Data::Dumper->Dump( [  \%results ],  [qw( results ) ] ) . "\n";
+    is( $results{'numberOfPencilMarks'}, 125, "After initial, count the number of pencil marks");
+        $numberOfTests++;
+    $test->setCellState( 1, 1, 4);
+    %results = $test->analyzeBoard();
+    print $test->printBoard();
+
+    is( $results{'numberOfPencilMarks'}, 125-12, "After initial, count the number of pencil marks");
+        $numberOfTests++;
+
+
+        exit();
+}
 ##################################################################
 #
 #

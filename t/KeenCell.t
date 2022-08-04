@@ -1,4 +1,3 @@
-#! /mu/bin/perl
 #
 #===============================================================================
 #
@@ -38,30 +37,12 @@ print    $testX->toPrint();
 is( $testX->isCellSolved(), 0, "testing if Cell is solved");
     $numberOfTests++;
 
-my @a = $testX->getRefOfCellPencilMarks();
-#note "ishow array";
-#print Data::Dumper->Dump( [@a],  [qw(array) ] ) . "\n";
-#note "end of array";
+checkForcingCellState();
 
-my $cmp = new Data::Compare( @a, \[1 .. 9 ] );
-
-is( $cmp->Cmp(), 1, "testing if Cell holds all nine possibilites ");
-    $numberOfTests++;
-
-is( $testX->removeValues( 4), 8, "testing of removing just one possibility");
-    $numberOfTests++;
-#print    $testX->toPrint();
-
-is( $testX->removeValues( 5, 3) , 6, "testing of removing two possibilities");
-    $numberOfTests++;
+checkPencilMarks();
 
 
-is( $testX->isCellSolved(), 0, "testing if Cell is solved");
-    $numberOfTests++;
-is( $testX->removeValues( 2,3,4,5,6,7,8,9 ) , 1, "testing of removing all but one possibility");
-    $numberOfTests++;
-is( $testX->isCellSolved(), 1, "testing if Cell is solved");
-    $numberOfTests++;
+checkSolvedFlag();
 
 
 my $testY=KeenCell->new("9", "Y");       # secondary cell partnered with X
@@ -162,6 +143,106 @@ test4factors();
 done_testing( $numberOfTests);
 
 
+#=== {{{1     SUBROUTINE FUNCTIONS  ================================================================
+
+sub checkForcingCellState {
+
+    my $testX=KeenCell->new("9", "X");
+
+    print $testX->toPrint();
+    $testX->setCellState( 8);
+    print $testX->toPrint();
+
+    is( $testX->isCellSolved(), 1, "testing if Cell is solved");
+        $numberOfTests++;
+    is( $testX->getCellsAnswer(), 8, "testing if Cells answer is 8");
+        $numberOfTests++;
+    is( $testX->numberPencils(), 1, "Solved the cell");
+        $numberOfTests++;
+    print $testX->printCell(0).  " |row 0 for " . $testX->printTitle() . "\n";
+    print $testX->printCell(1).  " |row 1 \n";
+    print $testX->printCell(2).  " |row 2 \n";
+
+        exit();
+
+
+
+}
+#===  FUNCTION  ================================================================
+#{{{1     NAME: checkPencilMarks
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
+sub checkPencilMarks {
+
+
+    note("running checkPencilMarks()");
+
+    my $testX=KeenCell->new("9", "X");
+
+    my @a = $testX->getRefOfCellPencilMarks();
+#note "ishow array";
+#print Data::Dumper->Dump( [@a],  [qw(array) ] ) . "\n";
+#note "end of array";
+
+    my $cmp = new Data::Compare( @a, \[1 .. 9 ] );
+
+    is( $cmp->Cmp(), 1, "testing if Cell holds all nine possibilites ");
+        $numberOfTests++;
+
+    is( $testX->removeValues( 4), 8, "testing of removing just one possibility");
+        $numberOfTests++;
+#print    $testX->toPrint();
+
+    is( $testX->removeValues( 5, 3) , 6, "testing of removing two possibilities");
+        $numberOfTests++;
+
+
+}
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: checkSolvedFlag
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
+sub checkSolvedFlag {
+
+    note("running checkSolvedFlag()");
+    my $testX=KeenCell->new("9", "X");
+
+
+    is( $testX->isCellSolved(), 0, "testing if Cell is not solved");
+        $numberOfTests++;
+    is( $testX->removeValues( 1,3,4,5,6,7,8,9 ) , 1, "testing of removing all but one possibility");
+        $numberOfTests++;
+    is( $testX->isCellSolved(), 1, "testing if Cell is solved");
+        $numberOfTests++;
+        #my @a = $testX->getArrayOfCellPencilMarks();
+    my $r = $testX->getArrayOfCellPencilMarks();
+    my $ans = $testX->getCellsAnswer();
+    #my @b = $testX->getRefOfCellPencilMarks();
+
+    #print Data::Dumper->Dump( [\@a,  \$r ],  [qw(array ref) ] ) . "\n";
+    #is( $a[0][0], 1, "testing if last Pencil mark is 1");
+    #$numberOfTests++;
+    #
+    is( $r->[0], 2, "testing if last Pencil mark is 2");
+        $numberOfTests++;
+    is( $ans, 2, "testing if last Pencil mark is 2");
+        $numberOfTests++;
+
+
+}
 #===  FUNCTION  ================================================================
 #{{{1     NAME: test3factors
 #      PURPOSE: 
@@ -173,7 +254,7 @@ done_testing( $numberOfTests);
 #     SEE ALSO: n/a
 #===============================================================================
 sub test3factors {
-    note( "test3factors() :");
+    note( "running test3factors() :");
     my $testZ=KeenCell->new("9", "Z");      #third cell in eqaution
     my $testX=KeenCell->new("9", "X");
     my $testY=KeenCell->new("9", "Y");
@@ -220,12 +301,12 @@ sub test3factors {
 #     SEE ALSO: n/a
 #===============================================================================
 sub test4factors {
-    note( "test4factors() :");
+    note( "running test4factors() :");
+    my $testU=KeenCell->new("9", "U");
     my $testW=KeenCell->new("9", "W");
     my $testX=KeenCell->new("9", "X");
     my $testY=KeenCell->new("9", "Y");
-    my $testZ=KeenCell->new("9", "Z");      #third cell in eqaution
-    my $testZ=KeenCell->new("9", "Z");      #third cell in eqaution
+    my $testZ=KeenCell->new("9", "Z");
 
     $testW->setMathEquation(  "x18" , $testX, $testY, $testZ);
     $testX->setMathEquation(  "x18" , $testW, $testY, $testZ);

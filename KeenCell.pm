@@ -13,7 +13,7 @@
 #  
 #               Upon Initialization, the cell can have all N possibilities.
 #               After it is solved, the coll can only have that possibility. 
-
+#
 #
 #        FILES: ---
 #         BUGS: ---
@@ -48,6 +48,7 @@ Readonly my $notSolved     =>  0;
 my $DEBUGLEVEL = 0;
 
 
+#=== {{{1     SUBROUTINE FUNCTIONS  ================================================================
 #===  FUNCTION  ================================================================
 #{{{1     NAME: new
 #      PURPOSE: 
@@ -95,8 +96,10 @@ sub setCellState {
     if ( $state < 1 || $state > $self->{'N'}  ) {
             print "invalid state ($state) attempted";
             die;
-        }
-    $self->{'possible'} = $state;
+    }
+
+    $self->{'possible'} =  undef;
+    $self->{'possible'}[0] = $state;
     $self->{'solved'} = 1;
 
     return     $self->{'possible'} ;
@@ -231,6 +234,20 @@ sub getArrayOfCellPencilMarks {
 }   # end of getArrayOfCellPencilMarks
 
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: getCellsAnswer
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
+sub getCellsAnswer {
+    my $self = shift;
+    return     $self->{'possible'}[0];
+} # end of getCellsAnswer
 
 
 #===  FUNCTION  ================================================================
@@ -800,7 +817,7 @@ sub printCell {
     }
     my %hashOfPossible ;
     if ( $self ->{'solved'}  ) { 
-        return ("| ". $self->{'possible'} . " ". $self->{'possible'} . " ". $self->{'possible'} . " ");
+        return ("| ". $self->{'possible'}[0] . " ". $self->{'possible'}[0] . " ". $self->{'possible'}[0] . " ");
     }
     
     foreach my $a (  @{ $self->{'possible'} } ) {

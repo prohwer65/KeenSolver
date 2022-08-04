@@ -29,6 +29,8 @@ use Data::Dumper;
 
 has 'name'       => ( is => 'ro', isa => "Str" );
 
+#=== {{{1     SUBROUTINE FUNCTIONS  ================================================================
+#===  FUNCTION  ================================================================
 #===  FUNCTION  ================================================================
 #{{{1     NAME: new
 #      PURPOSE: 
@@ -180,6 +182,91 @@ sub solveByMath {
     return ;
 
 }   # end of solveByMath
+
+
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: analyzeBoard
+#      PURPOSE: Analyze the board, looking for cells/values that are solved, 
+#               how many pencil marks, 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
+sub analyzeBoard {
+    my $self = shift; 
+    my $boardSize = $self->{'N'};
+
+    my $row=0;
+    my $col=0;
+
+    my @Board = @{$self->{'board'}} ;
+    my %tmpResults;
+    my $numberOfPencilMarks=0;
+
+    for( $row=$boardSize-1; $row > -1; $row-- ) {
+            for( $col=0; $col< $boardSize; $col++ ) {
+                #$Board[$row][$col]->solveByMath( );
+
+
+                if ( $Board[$row][$col]->isCellSolved( ) ) {
+                    # if the cell is solved, then remove the answer from the other cells in the same row/col
+                    my $ans = $Board[$row][$col]->getCellsAnswer();
+
+                    $self->removeValueFromRow( $row, $ans);
+                    $self->removeValueFromCol( $col, $ans);
+
+                 
+                }
+                    # count the number of cells with only two answers and what those answers are.
+                    # If there are X cells with the same X pencil marks, we can remove those 
+                    # pencil marks from the OTHER cells
+            }
+    }
+
+    for( $row=$boardSize-1; $row > -1; $row-- ) {
+        for( $col=0; $col< $boardSize; $col++ ) {
+            $numberOfPencilMarks += $Board[$row][$col]->numberPencils( );
+        }
+    }
+
+    $tmpResults{'numberOfPencilMarks'} = $numberOfPencilMarks;
+    return %tmpResults;
+
+}   # end of analyzeBoard
+
+sub removeValueFromCol {
+    my $self = shift; 
+    my $col  = shift; 
+    my $ans  = shift;
+
+
+    my $row;
+    my $boardSize = $self->{'N'};
+    my @Board = @{$self->{'board'}} ;
+
+    for( $row = 0; $row< $boardSize; $row++ ) {
+                $Board[$row][$col]->removeValues($ans );
+    }
+}
+
+sub removeValueFromRow {
+    my $self = shift; 
+    my $row  = shift; 
+    my $ans  = shift;
+
+
+    my $col;
+    my $boardSize = $self->{'N'};
+    my @Board = @{$self->{'board'}} ;
+
+    for( $col = 0; $col< $boardSize; $col++ ) {
+                $Board[$row][$col]->removeValues($ans );
+    }
+}
 
 
 
