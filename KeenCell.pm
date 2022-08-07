@@ -64,13 +64,16 @@ sub new {
     my $class = ref($this) || $this;
     my $self; 
     my $Ncells= shift;
+    $self->{'title'} = shift;
 
     die "You must define the number of possible states for this cell"  if ( !defined $Ncells ) ;
+    die "Please keep the number of cells less than 10"   if ( $Ncells > 9);
+    die "The number of cells needs to be greater than 2"   if ( $Ncells < 1);
+    die "Please provide a name for the cell (ie X:0 Y:0) " if ( !defined $self->{'title'});
     
     $self->{'possible'} = [1 .. $Ncells];
     $self->{'solved'}   = 0;
     $self->{'N'} = $Ncells;
-    $self->{'title'} = shift;
 
 
     bless $self, $class;
@@ -836,6 +839,29 @@ sub printCell {
     return $string;
 
 }   # end of printCell
+
+
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: printFullCell
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
+sub printFullCell {
+
+    my $self = shift;
+
+    my $string = $self->printCell(0).  " |row 0 for " . $self->printTitle() . "\n";
+    $string   .= $self->printCell(1).  " |row 1 eq  " . $self->getOperator() . $self->getSolution() . "\n";
+    $string   .= $self->printCell(2).  " |row 2 \n";
+
+    return $string;
+}   # end of printFullCell()
 
 #===  FUNCTION  ================================================================
 #{{{1     NAME: printEquations

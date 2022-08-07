@@ -79,12 +79,8 @@ is( $testY->numberOfPartners(), 2, "count the number of Math partners for Y");
 $testX->solveByMath(  );
 note( "addition to 17" );
 
-print $testX->printCell(0).  " |row 0 for " . $testX->printTitle() . "\n";
-print $testX->printCell(1).  " |row 1 \n";
-print $testX->printCell(2).  " |row 2 \n";
-print $testY->printCell(0).  " |row 0 for " . $testY->printTitle() . "\n";
-print $testY->printCell(1).  " |row 1 \n";
-print $testY->printCell(2).  " |row 2 \n";
+    print $testX->printFullCell();
+    print $testY->printFullCell();
 
 is( $testX->numberPencils(), 2, "Eliminated the values in X that don't +17" );
     $numberOfTests++;
@@ -159,11 +155,8 @@ sub checkForcingCellState {
         $numberOfTests++;
     is( $testX->numberPencils(), 1, "Solved the cell");
         $numberOfTests++;
-    print $testX->printCell(0).  " |row 0 for " . $testX->printTitle() . "\n";
-    print $testX->printCell(1).  " |row 1 \n";
-    print $testX->printCell(2).  " |row 2 \n";
 
-        exit();
+    print $testX->printFullCell();
 
 
 
@@ -272,17 +265,11 @@ sub test3factors {
     is( $testZ->numberPencils(), 5, "Eliminated the values in Z that don't x18 for 3 cells" );
     $numberOfTests++;
 
-    print $testX->printCell(0).  " |row 0 for " . $testX->printTitle() . "\n";
-    print $testX->printCell(1).  " |row 1 \n";
-    print $testX->printCell(2).  " |row 2 \n";
+    print $testX->printFullCell(). "\n";
 
-    print $testY->printCell(0).  " |row 0 for " . $testY->printTitle() . "\n";
-    print $testY->printCell(1).  " |row 1 \n";
-    print $testY->printCell(2).  " |row 2 \n";
+    print $testY->printFullCell(). "\n";
 
-    print $testZ->printCell(0).  " |row 0 for " . $testZ->printTitle() . "\n";
-    print $testZ->printCell(1).  " |row 1 \n";
-    print $testZ->printCell(2).  " |row 2 \n";
+    print $testZ->printFullCell(). "\n";
 
 }   # end of test3factors
 
@@ -323,21 +310,10 @@ sub test4factors {
     is( $testZ->numberPencils(), 5, "Eliminated the values in Z that don't x18 for 4 cells" );
     $numberOfTests++;
 
-    print $testW->printCell(0).  " |row 0 for " . $testW->printTitle() . "\n";
-    print $testW->printCell(1).  " |row 1 \n";
-    print $testW->printCell(2).  " |row 2 \n";
-
-    print $testX->printCell(0).  " |row 0 for " . $testX->printTitle() . "\n";
-    print $testX->printCell(1).  " |row 1 \n";
-    print $testX->printCell(2).  " |row 2 \n";
-
-    print $testY->printCell(0).  " |row 0 for " . $testY->printTitle() . "\n";
-    print $testY->printCell(1).  " |row 1 \n";
-    print $testY->printCell(2).  " |row 2 \n";
-
-    print $testZ->printCell(0).  " |row 0 for " . $testZ->printTitle() . "\n";
-    print $testZ->printCell(1).  " |row 1 \n";
-    print $testZ->printCell(2).  " |row 2 \n";
+    print $testW->printFullCell();
+    print $testX->printFullCell();
+    print $testY->printFullCell();
+    print $testZ->printFullCell();
 
 }   # end of test4factors
 
