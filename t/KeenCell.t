@@ -8,8 +8,8 @@
 #        FILES: ---
 #         BUGS: ---
 #        NOTES: ---
-#       AUTHOR: Paul Rohwer (PWR), prohwer@micron.com
-# ORGANIZATION: SpecTek
+#       AUTHOR: Paul Rohwer (PWR), prohwer@mindspring.com
+# ORGANIZATION: PowerAudio
 #      VERSION: 1.0
 #      CREATED: 03/12/20 08:36:00
 #     REVISION: ---

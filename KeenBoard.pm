@@ -22,9 +22,10 @@ use strict;
 use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
-use KeenCell;
 use Data::Dumper;
 
+use lib qw ( . lib );
+use KeenCell;
 #use parent 'myParentOOP';
 
 has 'name'       => ( is => 'ro', isa => "Str" );

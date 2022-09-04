@@ -18,8 +18,8 @@
 #        FILES: ---
 #         BUGS: ---
 #        NOTES: ---
-#       AUTHOR: Paul Rohwer (PWR), prohwer@micron.com
-# ORGANIZATION: SpecTek
+#       AUTHOR: Paul Rohwer (PWR), prohwer@mindspring.com
+# ORGANIZATION: PowerAudio
 #      VERSION: 1.0
 #      CREATED: 03/11/20 17:42:49
 #     REVISION: ---
@@ -37,6 +37,8 @@ use Data::Dumper;
 
 use Readonly; 
 
+use lib qw ( . lib );
+#use parent 'myParentOOP';
 
 Readonly my $alreadySolved =>  10;
 Readonly my $justSolved    =>  1;
