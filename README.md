@@ -10,7 +10,7 @@ Program to solve Keen puzzles.
 :broken_heart:
 :blowfish:
 :earth_africa:
-:earth_america:
+:earth_americas:
 :dog:
 :dog2:
 :waxing_gibbous_moon:
