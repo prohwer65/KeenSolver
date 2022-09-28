@@ -22,9 +22,10 @@ use strict;
 use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
-use KeenCell;
 use Data::Dumper;
 
+use lib qw ( . lib );
+use KeenCell;
 #use parent 'myParentOOP';
 
 has 'name'       => ( is => 'ro', isa => "Str" );
@@ -62,7 +63,7 @@ sub new {
         for( $col=0; $col< $boardSize; $col++ ) {
             my $title = "x:$row y:$col";
             $Board[$row][$col] = KeenCell->new($boardSize, $title);
-            print ".";
+            #print ".";
         }
     }
 
@@ -238,6 +239,16 @@ sub analyzeBoard {
 
 }   # end of analyzeBoard
 
+#===  FUNCTION  ================================================================
+#{{{1     NAME: removeValueFromCol
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub removeValueFromCol {
     my $self = shift; 
     my $col  = shift; 
@@ -253,6 +264,17 @@ sub removeValueFromCol {
     }
 }
 
+
+#===  FUNCTION  ================================================================
+#{{{1     NAME: removeValueFromRow
+#      PURPOSE: 
+#   PARAMETERS: ????
+#      RETURNS: ????
+#  DESCRIPTION: ????
+#       THROWS: no exceptions
+#     COMMENTS: none
+#     SEE ALSO: n/a
+#===============================================================================
 sub removeValueFromRow {
     my $self = shift; 
     my $row  = shift; 
